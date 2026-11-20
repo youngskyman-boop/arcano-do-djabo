@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Encontro do Arcano do Diabo (Diabitz) — Bilheteria</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-deep: #07040e;
+      --bg-card: #ffffff;
+      --bg-soft: #f5f3fa;
+      --text-dark: #140f24;
+      --text-muted: #5c5475;
+      --text-light: #f8f5ff;
+      --accent-purple: #7c3aed;
+      --accent-magenta: #d946ef;
+      --accent-emerald: #10b981;
+      --accent-cyan: #22d3ee;
+      --border-soft: rgba(20, 15, 36, 0.1);
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --radius-sm: 10px;
+      --shadow-card: 0 18px 45px rgba(4, 2, 10, 0.55);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-deep);
+      color: var(--text-light);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Cenário artístico psicodélico ao fundo (floresta noturna, névoa, cogumelos, folhas e cartas XV) */
+    .mystic-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 18% 18%, rgba(16, 185, 129, 0.24), transparent 42%),
+        radial-gradient(circle at 82% 20%, rgba(217, 70, 239, 0.24), transparent 44%),
+        radial-gradient(circle at 50% 68%, rgba(124, 58, 237, 0.32), transparent 55%),
+        linear-gradient(180deg, #090514 0%, #0d161a 48%, #07040e 100%);
+    }
+
+    .mystic-backdrop svg {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.72;
+    }
+
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px) rotate(var(--rot, 0deg)); }
+      50% { transform: translateY(-10px) rotate(calc(var(--rot, 0deg) + 2deg)); }
+    }
+
+    .floating-tarot {
+      position: fixed;
+      z-index: 1;
+      pointer-events: none;
+      width: 82px;
+      height: 128px;
+      border-radius: 10px;
+      padding: 5px;
+      background: linear-gradient(135deg, #ff6ec7, #7873f5, #4ade80, #38bdf8);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6), 0 0 18px rgba(217, 70, 239, 0.35);
+      animation: floatSlow 6.5s ease-in-out infinite;
+    }
+
+    .floating-tarot-inner {
+      width: 100%;
+      height: 100%;
+      background: #12091f;
+      border-radius: 7px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 4px;
+      color: #fde68a;
+      font-family: 'Cinzel Decorative', serif;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+    }
+
+    .floating-tarot.card-1 {
+      top: 11%;
+      left: 3%;
+      --rot: -12deg;
+    }
+
+    .floating-tarot.card-2 {
+      bottom: 14%;
+      right: 3%;
+      --rot: 11deg;
+      animation-delay: -2.8s;
+    }
+
+    @media (max-width: 900px) {
+      .floating-tarot {
+        width: 58px;
+        height: 92px;
+        opacity: 0.72;
+      }
+      .floating-tarot.card-1 { top: 6%; left: -10px; }
+      .floating-tarot.card-2 { bottom: 18%; right: -10px; }
+    }
+
+    /* Topo estilo plataforma de ingressos */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      background: rgba(11, 7, 22, 0.82);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .topbar-inner {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .brand-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: #fff;
+      font-weight: 800;
+      font-size: 1.05rem;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-badge {
+      background: linear-gradient(135deg, #8b5cf6, #ec4899, #10b981);
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 4px 8px;
+      border-radius: 999px;
+      letter-spacing: 0.06em;
+    }
+
+    .url-pill {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      color: #e9d5ff;
+      font-size: 0.78rem;
+      padding: 6px 12px;
+      border-radius: 999px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+
+    /* Container principal */
+    .page-shell {
+      position: relative;
+      z-index: 5;
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 24px 18px 110px;
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1.35fr 0.9fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    @media (max-width: 920px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+        gap: 18px;
+      }
+    }
+
+    /* Cards brancos estilo bilheteria moderna */
+    .ticket-card {
+      background: var(--bg-card);
+      color: var(--text-dark);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.45);
+    }
+
+    .event-hero {
+      background:
+        linear-gradient(135deg, rgba(24, 10, 48, 0.92), rgba(10, 46, 38, 0.88)),
+        radial-gradient(circle at top right, rgba(217, 70, 239, 0.45), transparent 55%);
+      color: #fff;
+      padding: 24px;
+      position: relative;
+    }
+
+    .event-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .tag-pill {
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 5px 11px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      color: #f3e8ff;
+    }
+
+    .tag-pill.neon {
+      background: linear-gradient(90deg, rgba(16, 185, 129, 0.28), rgba(217, 70, 239, 0.28));
+      border-color: rgba(110, 231, 183, 0.55);
+      color: #a7f3d0;
+    }
+
+    .event-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(1.5rem, 3.4vw, 2.35rem);
+      line-height: 1.15;
+      font-weight: 900;
+      background: linear-gradient(90deg, #6ee7b7, #f0abfc, #67e8f9);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+
+    .event-subtitle {
+      font-size: 0.96rem;
+      color: #e2d9f3;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .meta-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+      gap: 10px;
+      background: rgba(9, 5, 20, 0.52);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: var(--radius-md);
+      padding: 12px;
+    }
+
+    .meta-item span {
+      display: block;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #c4b5fd;
+      margin-bottom: 2px;
+    }
+
+    .meta-item strong {
+      font-size: 0.88rem;
+      color: #ffffff;
+      font-weight: 700;
+    }
+
+    .card-body {
+      padding: 22px 24px;
+    }
+
+    .section-heading {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--text-dark);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .highlights-list {
+      list-style: none;
+      display: grid;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .highlights-list li {
+      background: var(--bg-soft);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-sm);
+      padding: 11px 14px;
+      font-size: 0.9rem;
+      color: var(--text-dark);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+    }
+
+    .highlights-list li .ico {
+      font-size: 1.15rem;
+      flex-shrink: 0;
+    }
+
+    .footer-note-box {
+      background: linear-gradient(120deg, #f3e8ff, #ecfdf5);
+      border: 1px dashed #8b5cf6;
+      border-radius: var(--radius-md);
+      padding: 13px 15px;
+      font-size: 0.86rem;
+      color: #2e1065;
+      font-weight: 600;
+    }
+
+    /* Coluna de compra / checkout */
+    .checkout-sticky {
+      position: sticky;
+      top: 76px;
+    }
+
+    @media (max-width: 920px) {
+      .checkout-sticky {
+        position: static;
+      }
+    }
+
+    .lot-box {
+      background: var(--bg-soft);
+      border: 1.5px solid #ddd6fe;
+      border-radius: var(--radius-md);
+      padding: 14px;
+      margin-bottom: 16px;
+    }
+
+    .lot-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .lot-name {
+      font-weight: 800;
+      font-size: 0.96rem;
+      color: var(--text-dark);
+    }
+
+    .lot-desc {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .lot-price {
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: #5b21b6;
+      white-space: nowrap;
+    }
+
+    .qty-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .qty-controls {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #fff;
+      border: 1px solid #cbd5e1;
+      border-radius: 999px;
+      padding: 4px 8px;
+    }
+
+    .qty-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: none;
+      background: #ede9fe;
+      color: #4c1d95;
+      font-weight: 800;
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: transform 0.12s ease, background 0.15s ease;
+    }
+
+    .qty-btn:hover {
+      background: #ddd6fe;
+      transform: scale(1.05);
+    }
+
+    .qty-value {
+      min-width: 24px;
+      text-align: center;
+      font-weight: 800;
+      font-size: 0.98rem;
+      color: var(--text-dark);
+    }
+
+    .summary-lines {
+      border-top: 1px solid #e5e7eb;
+      padding-top: 14px;
+      margin-bottom: 16px;
+      display: grid;
+      gap: 8px;
+      font-size: 0.88rem;
+    }
+
+    .summary-line {
+      display: flex;
+      justify-content: space-between;
+      color: var(--text-muted);
+    }
+
+    .summary-line.total {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--text-dark);
+      padding-top: 6px;
+      border-top: 1px dashed #d1d5db;
+    }
+
+    .btn-primary {
+      width: 100%;
+      min-height: 48px;
+      border: none;
+      border-radius: var(--radius-md);
+      background: linear-gradient(90deg, #7c3aed, #c026d3, #059669);
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 0.96rem;
+      cursor: pointer;
+      box-shadow: 0 10px 24px rgba(124, 58, 237, 0.35);
+      transition: transform 0.14s ease, filter 0.15s ease;
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.06);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      width: 100%;
+      min-height: 44px;
+      margin-top: 10px;
+      border-radius: var(--radius-md);
+      border: 1.5px solid #c4b5fd;
+      background: #faf5ff;
+      color: #5b21b6;
+      font-weight: 700;
+      font-size: 0.86rem;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .btn-secondary:hover {
+      background: #f3e8ff;
+    }
+
+    .disclaimer-micro {
+      margin-top: 12px;
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    /* Barra fixa no mobile */
+    .mobile-checkout-bar {
+      display: none;
+    }
+
+    @media (max-width: 920px) {
+      .mobile-checkout-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 25;
+        background: rgba(15, 9, 30, 0.94);
+        backdrop-filter: blur(12px);
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
+        padding: 12px 16px;
+      }
+
+      .mobile-checkout-bar .m-info span {
+        display: block;
+        font-size: 0.72rem;
+        color: #c4b5fd;
+      }
+
+      .mobile-checkout-bar .m-info strong {
+        font-size: 1rem;
+        color: #fff;
+      }
+
+      .mobile-checkout-bar .btn-primary {
+        width: auto;
+        padding: 0 20px;
+      }
+    }
+
+    /* Modal cômico de pagamento recusado */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      background: rgba(4, 2, 10, 0.78);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-box {
+      width: 100%;
+      max-width: 460px;
+      max-height: 90vh;
+      overflow-y: auto;
+      background: #ffffff;
+      color: var(--text-dark);
+      border-radius: 22px;
+      padding: 22px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65);
+      border: 2px solid #a855f7;
+      position: relative;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: none;
+      background: #f3f4f6;
+      color: #111827;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .meme-banner {
+      background: linear-gradient(135deg, #1e1035, #064e3b);
+      color: #fff;
+      border-radius: 16px;
+      padding: 16px;
+      text-align: center;
+      margin-bottom: 16px;
+      border: 1px solid rgba(167, 243, 208, 0.35);
+    }
+
+    .meme-emoji {
+      font-size: 2.6rem;
+      line-height: 1.1;
+      margin-bottom: 6px;
+    }
+
+    .meme-headline {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 1.18rem;
+      font-weight: 900;
+      color: #fde047;
+      margin-bottom: 6px;
+    }
+
+    .meme-sub {
+      font-size: 0.86rem;
+      color: #e9d5ff;
+    }
+
+    .balance-box {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      font-size: 0.86rem;
+      color: #7f1d1d;
+    }
+
+    .balance-box strong {
+      font-size: 1rem;
+      color: #b91c1c;
+    }
+
+    .page-footer {
+      position: relative;
+      z-index: 5;
+      max-width: 1160px;
+      margin: 16px auto 0;
+      padding: 16px 18px 28px;
+      text-align: center;
+      font-size: 0.82rem;
+      color: #d8b4fe;
+    }
+  </style>
+</head>
+<body>
+  <!-- Fundo artístico místico e psicodélico -->
+  <div class="mystic-backdrop" aria-hidden="true">
+    <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <radialGradient id="glowPurple" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#d946ef" stop-opacity="0.55" />
+          <stop offset="100%" stop-color="#7c3aed" stop-opacity="0" />
+        </radialGradient>
+        <radialGradient id="glowMint" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#34d399" stop-opacity="0.5" />
+          <stop offset="100%" stop-color="#059669" stop-opacity="0" />
+        </radialGradient>
+      </defs>
+
+      <!-- Névoa mística -->
+      <circle cx="240" cy="220" r="320" fill="url(#glowMint)" />
+      <circle cx="1180" cy="260" r="350" fill="url(#glowPurple)" />
+      <circle cx="720" cy="680" r="420" fill="url(#glowPurple)" />
+
+      <!-- Folhas tropicais estilizadas nas laterais -->
+      <g fill="#065f46" opacity="0.65">
+        <path d="M-20,120 Q120,70 210,180 Q100,230 -20,120 Z" />
+        <path d="M-30,270 Q140,240 220,360 Q90,390 -30,270 Z" />
+        <path d="M-20,560 Q140,490 230,620 Q100,670 -20,560 Z" />
+        <path d="M1460,150 Q1310,90 1220,210 Q1340,260 1460,150 Z" />
+        <path d="M1460,420 Q1290,370 1200,490 Q1330,540 1460,420 Z" />
+        <path d="M1460,680 Q1310,620 1210,740 Q1340,790 1460,680 Z" />
+      </g>
+
+      <!-- Cogumelos psicodélicos neon -->
+      <g transform="translate(130, 690)">
+        <rect x="28" y="36" width="18" height="58" rx="9" fill="#e9d5ff" opacity="0.7" />
+        <path d="M-14,42 C-14,4 88,4 88,42 Z" fill="#a855f7" opacity="0.85" />
+        <circle cx="14" cy="28" r="6" fill="#fef08a" opacity="0.9" />
+        <circle cx="38" cy="18" r="7" fill="#67e8f9" opacity="0.9" />
+        <circle cx="64" cy="30" r="5" fill="#fef08a" opacity="0.9" />
+      </g>
+
+      <g transform="translate(1240, 710)">
+        <rect x="28" y="34" width="16" height="52" rx="8" fill="#d1fae5" opacity="0.7" />
+        <path d="M-12,40 C-12,6 84,6 84,40 Z" fill="#10b981" opacity="0.82" />
+        <circle cx="16" cy="26" r="5.5" fill="#f0abfc" opacity="0.9" />
+        <circle cx="42" cy="18" r="6.5" fill="#fef08a" opacity="0.9" />
+        <circle cx="62" cy="29" r="5" fill="#f0abfc" opacity="0.9" />
+      </g>
+
+      <g transform="translate(1080, 110) scale(0.75)">
+        <rect x="28" y="34" width="16" height="50" rx="8" fill="#e9d5ff" opacity="0.6" />
+        <path d="M-12,40 C-12,6 84,6 84,40 Z" fill="#ec4899" opacity="0.75" />
+        <circle cx="20" cy="26" r="5" fill="#67e8f9" opacity="0.85" />
+        <circle cx="48" cy="20" r="6" fill="#fef08a" opacity="0.85" />
+      </g>
+    </svg>
+  </div>
+
+  <!-- Cartas de tarô holográficas XV flutuantes -->
+  <div class="floating-tarot card-1" aria-hidden="true">
+    <div class="floating-tarot-inner">
+      <span style="font-size:0.75rem; font-weight:900;">XV</span>
+      <span style="font-size:1.35rem;">😈</span>
+      <span style="font-size:0.55rem; letter-spacing:0.06em;">THE DEVIL</span>
+    </div>
+  </div>
+
+  <div class="floating-tarot card-2" aria-hidden="true">
+    <div class="floating-tarot-inner">
+      <span style="font-size:0.75rem; font-weight:900;">XV</span>
+      <span style="font-size:1.35rem;">🍄</span>
+      <span style="font-size:0.55rem; letter-spacing:0.06em;">ARCANO</span>
+    </div>
+  </div>
+
+  <!-- Cabeçalho estilo bilheteria -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="#topo" class="brand-link">
+        <span>MEAPLE</span>
+        <span class="brand-badge">Skyman Productions</span>
+      </a>
+      <div class="url-pill">meaple.com.br/meuirmaorenatorusso/palmas</div>
+    </div>
+  </header>
+
+  <main id="topo" class="page-shell">
+    <div class="main-grid">
+      <!-- Coluna esquerda: informações do evento -->
+      <section class="ticket-card">
+        <div class="event-hero">
+          <div class="event-tags">
+            <span class="tag-pill neon">🍄 Festa Have Mística</span>
+            <span class="tag-pill">🃏 Carta de Tarô XV</span>
+            <span class="tag-pill">🌿 Folhas &amp; Cogumelos</span>
+          </div>
+          <h1 class="event-title">Encontro do Arcano do Diabo</h1>
+          <p class="event-subtitle">Edição Diabitz • Aparição especial Dj cabeça de gelo &amp; mago feiticeiro</p>
+
+          <div class="meta-strip">
+            <div class="meta-item">
+              <span>Data</span>
+              <strong>66/66/6666</strong>
+            </div>
+            <div class="meta-item">
+              <span>Horário</span>
+              <strong>3:33 da manhã</strong>
+            </div>
+            <div class="meta-item">
+              <span>Local</span>
+              <strong>Terreiro de Itz</strong>
+            </div>
+            <div class="meta-item">
+              <span>Ingresso</span>
+              <strong>R$ 30,00</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <h2 class="section-heading">
+            <span>Destaques da noite</span>
+            <span style="font-size:0.78rem; color:#6d28d9;">100% Temático</span>
+          </h2>
+
+          <ul class="highlights-list">
+            <li>
+              <span class="ico">🎧</span>
+              <span>Aparição especial <strong>Dj cabeça de gelo</strong> comandando o som da Have</span>
+            </li>
+            <li>
+              <span class="ico">🍸</span>
+              <span><strong>Copão de gin liberado pras bb até 00h</strong> no clima místico da floresta</span>
+            </li>
+            <li>
+              <span class="ico">🧙‍♂️</span>
+              <span>Mago feiticeiro, névoa, folhas tropicais e cogumelos brilhantes no <strong>Terreiro de Itz</strong></span>
+            </li>
+            <li>
+              <span class="ico">🃏</span>
+              <span><strong>Disputa de bafo com Tarô</strong> — virando as cartas no tapa valendo o destino</span>
+            </li>
+          </ul>
+
+          <div class="footer-note-box">
+            ✨ Rodapé oficial: <strong>Disputa de bafo com Tarô</strong> — realização <strong>Skyman Productions</strong>.
+          </div>
+        </div>
+      </section>
+
+      <!-- Coluna direita: seletor de ingressos e checkout -->
+      <aside class="checkout-sticky">
+        <div class="ticket-card">
+          <div class="card-body">
+            <h2 class="section-heading">
+              <span>Selecionar ingressos</span>
+              <span style="font-size:0.78rem; color:#059669;">Lote Único</span>
+            </h2>
+
+            <div class="lot-box">
+              <div class="lot-top">
+                <div>
+                  <div class="lot-name">Ingresso Arcano XV — Pista Have</div>
+                  <div class="lot-desc">Acesso ao Terreiro de Itz • Copão de gin liberado pras bb até 00h</div>
+                </div>
+                <div class="lot-price">R$ 30,00</div>
+              </div>
+
+              <div class="qty-row">
+                <span style="font-size:0.82rem; color:#4b5563; font-weight:600;">Quantidade:</span>
+                <div class="qty-controls">
+                  <button type="button" class="qty-btn" id="btnMinus" aria-label="Diminuir quantidade">−</button>
+                  <span class="qty-value" id="qtyDisplay">1</span>
+                  <button type="button" class="qty-btn" id="btnPlus" aria-label="Aumentar quantidade">+</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="summary-lines">
+              <div class="summary-line">
+                <span>Subtotal (<span id="summaryQty">1</span>x R$ 30,00)</span>
+                <span id="subtotalDisplay">R$ 30,00</span>
+              </div>
+              <div class="summary-line">
+                <span>Taxa mística do Arcano XV</span>
+                <span>R$ 0,00</span>
+              </div>
+              <div class="summary-line total">
+                <span>Total a pagar</span>
+                <span id="totalDisplay">R$ 30,00</span>
+              </div>
+            </div>
+
+            <button type="button" class="btn-primary" id="btnCheckout">
+              Finalizar compra
+            </button>
+
+            <button type="button" class="btn-secondary" id="btnFiado">
+              Tentar passar no fiado com o Mago
+            </button>
+
+            <p class="disclaimer-micro">
+              Site de brincadeira sem fins lucrativos. Ao clicar em finalizar, o sistema consulta sua conta e o Tarô.
+            </p>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <!-- Barra fixa inferior para celular -->
+  <div class="mobile-checkout-bar">
+    <div class="m-info">
+      <span id="mobileQtyLabel">1 ingresso • 66/66/6666 às 3:33 da manhã</span>
+      <strong id="mobileTotalLabel">R$ 30,00</strong>
+    </div>
+    <button type="button" class="btn-primary" id="btnMobileCheckout">Finalizar</button>
+  </div>
+
+  <footer class="page-footer">
+    Encontro do Arcano do Diabo • 66/66/6666 às 3:33 da manhã • Terreiro de Itz • Disputa de bafo com Tarô — Skyman Productions
+  </footer>
+
+  <!-- Modal cômico: pagamento recusado por falta de dinheiro -->
+  <div class="modal-backdrop" id="brokeModal" role="dialog" aria-modal="true" aria-labelledby="brokeModalTitle">
+    <div class="modal-box">
+      <button type="button" class="modal-close" id="closeModal" aria-label="Fechar aviso">✕</button>
+
+      <div class="meme-banner">
+        <div class="meme-emoji" id="modalEmoji">💸😭🃏</div>
+        <div class="meme-headline" id="brokeModalTitle">PAGAMENTO NEGADO: VOCÊ É POBRE!</div>
+        <p class="meme-sub" id="modalSubtext">
+          Nem o Arcano XV nem o Mago Feiticeiro conseguiram aprovar essa compra.
+        </p>
+      </div>
+
+      <div class="balance-box">
+        <div><strong>Valor da compra:</strong> <span id="modalAmount">R$ 30,00</span></div>
+        <div><strong>Saldo encontrado na conta:</strong> <strong>R$ 1,47</strong> (e um fiapo de crédito)</div>
+        <div style="margin-top:6px;"><strong>Parecer do Tarô:</strong> Carta do Diabo riu da sua fatura e mandou você economizar para o copão de gin.</div>
+      </div>
+
+      <button type="button" class="btn-primary" id="btnRetryJoke">
+        Tentar de novo mesmo assim
+      </button>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const TICKET_PRICE = 30;
+      let qty = 1;
+
+      const qtyDisplay = document.getElementById('qtyDisplay');
+      const summaryQty = document.getElementById('summaryQty');
+      const subtotalDisplay = document.getElementById('subtotalDisplay');
+      const totalDisplay = document.getElementById('totalDisplay');
+      const mobileQtyLabel = document.getElementById('mobileQtyLabel');
+      const mobileTotalLabel = document.getElementById('mobileTotalLabel');
+
+      const brokeModal = document.getElementById('brokeModal');
+      const modalAmount = document.getElementById('modalAmount');
+      const modalEmoji = document.getElementById('modalEmoji');
+      const brokeModalTitle = document.getElementById('brokeModalTitle');
+      const modalSubtext = document.getElementById('modalSubtext');
+
+      function formatBRL(value) {
+        return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+      }
+
+      function updateUI() {
+        const total = qty * TICKET_PRICE;
+        const formatted = formatBRL(total);
+        qtyDisplay.textContent = qty;
+        summaryQty.textContent = qty;
+        subtotalDisplay.textContent = formatted;
+        totalDisplay.textContent = formatted;
+        mobileTotalLabel.textContent = formatted;
+        const word = qty === 1 ? 'ingresso' : 'ingressos';
+        mobileQtyLabel.textContent = `${qty} ${word} • 66/66/6666 às 3:33 da manhã`;
+      }
+
+      function openBrokeModal(isFiado) {
+        modalAmount.textContent = formatBRL(qty * TICKET_PRICE);
+        if (isFiado) {
+          modalEmoji.textContent = '🧙‍♂️🚫💸';
+          brokeModalTitle.textContent = 'FIADO NEGADO: VOCÊ É POBRE!';
+          modalSubtext.textContent = 'O Mago olhou na bola de cristal, viu seu extrato e sumiu na fumaça.';
+        } else {
+          modalEmoji.textContent = '💸😭🃏';
+          brokeModalTitle.textContent = 'PAGAMENTO NEGADO: VOCÊ É POBRE!';
+          modalSubtext.textContent = 'Não foi possível concluir o pagamento porque falta verba na conta (intuito 100% cômico).';
+        }
+        brokeModal.classList.add('open');
+      }
+
+      function closeBrokeModal() {
+        brokeModal.classList.remove('open');
+      }
+
+      document.getElementById('btnMinus').addEventListener('click', () => {
+        if (qty > 1) {
+          qty -= 1;
+          updateUI();
+        }
+      });
+
+      document.getElementById('btnPlus').addEventListener('click', () => {
+        if (qty < 10) {
+          qty += 1;
+          updateUI();
+        }
+      });
+
+      document.getElementById('btnCheckout').addEventListener('click', () => openBrokeModal(false));
+      document.getElementById('btnMobileCheckout').addEventListener('click', () => openBrokeModal(false));
+      document.getElementById('btnFiado').addEventListener('click', () => openBrokeModal(true));
+      document.getElementById('closeModal').addEventListener('click', closeBrokeModal);
+
+      document.getElementById('btnRetryJoke').addEventListener('click', () => {
+        modalSubtext.textContent = 'Tentou de novo e o saldo continuou baixo! Vai ter que ganhar no bafo com Tarô.';
+      });
+
+      brokeModal.addEventListener('click', (e) => {
+        if (e.target === brokeModal) {
+          closeBrokeModal();
+        }
+      });
+
+      updateUI();
+    })();
+  </script>
+</body>
+</html>
